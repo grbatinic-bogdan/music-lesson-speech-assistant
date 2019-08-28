@@ -1,0 +1,19 @@
+{
+  "name": "stream-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "env $(cat .env) node server.js",
+    "debug": "env $(cat .env) node --inspect-brk server.js",
+    "app": "env $(cat .env) node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/speech": "^3.2.5",
+    "dialogflow": "^0.10.3",
+    "node-record-lpcm16": "^1.0.1"
+  }
+}
