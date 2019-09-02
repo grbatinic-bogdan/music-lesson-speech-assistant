@@ -17,14 +17,16 @@ function start() {
   startDialogFlow();
   storeConversation();
   console.log("Listening, press Ctrl+C to stop.");
+  console.log("Start by saying 'Book a music lesson'");
 
   eventEmitter.on(STOP_TALKING_EVENT, () => {
+    conversationStorage.print();
     process.exit();
   });
 
-  eventEmitter.on(DIALOGFLOW_DATA_EVENT, (question, fullfullmentText) => {
-    console.log(fullfullmentText);
-    console.log(conversationStorage.getData());
+  eventEmitter.on(DIALOGFLOW_DATA_EVENT, response => {
+    console.log(response.fulfillmentText);
+    //console.log(conversationStorage.getData());
   });
 }
 

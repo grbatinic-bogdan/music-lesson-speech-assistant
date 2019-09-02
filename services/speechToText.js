@@ -19,9 +19,7 @@ class SpeechToTextStream {
   }
 
   onData(data) {
-    const text = `${this.transcript} ${
-      data.results[0].alternatives[0].transcript
-    }`;
+    const text = `${this.transcript} ${data.results[0].alternatives[0].transcript}`;
 
     if (text.length > 0) {
       //console.log(`text: ${text}`);
@@ -30,6 +28,7 @@ class SpeechToTextStream {
       this.pauseSpeakingTimer = setTimeout(
         function() {
           eventEmitter.emit(HAS_TEXT_EVENT, text.trim());
+          this.transcript = "";
           this.endSpeakingTimer = setTimeout(() => {
             eventEmitter.emit(STOP_TALKING_EVENT);
           }, this.endSpeakingTime);
@@ -53,17 +52,17 @@ class SpeechToTextStream {
   }
 
   pause() {
-    console.log("pausing stt stream");
+    //console.log("pausing stt stream");
     this.recognizeStream.pause();
   }
 
   resume() {
-    console.log("resuming stt stream");
+    //console.log("resuming stt stream");
     this.recognizeStream.resume();
   }
 
   stop() {
-    console.log("stopping stt stream");
+    //console.log("stopping stt stream");
     this.recognizeStream.removeListener("data", this.onData);
   }
 }
@@ -94,7 +93,21 @@ function startSpeachToTextStream() {
     .streamingRecognize(request)
     .on("error", console.error);
 
-  const sttStream = new SpeechToTextStream(recognizeStream, 10000, 2000);
+  const endSpeakingTimeout = parseInt(process.env["END_SPEAKING_TIMEOUT"], 10);
+  const pauseSpeakingTimeout = parseInt(
+    process.env["PAUSE_SPEAKING_TIMEOUT"],
+    10
+  );
+
+  if (isNaN(endSpeakingTimeout) || isNaN(pauseSpeakingTimeout)) {
+    throw new Error("Missing timeout environment variables");
+  }
+
+  const sttStream = new SpeechToTextStream(
+    recognizeStream,
+    endSpeakingTimeout,
+    pauseSpeakingTimeout
+  );
   sttStream.start();
   recognizeStream.on("data", sttStream.onData.bind(sttStream));
 
@@ -103,7 +116,6 @@ function startSpeachToTextStream() {
   });
 
   eventEmitter.on(STOP_TALKING_EVENT, () => {
-    //recognizeStream.removeListener("data", sttStream.onData.bind(sttStream));
     sttStream.stop.call(sttStream);
   });
 

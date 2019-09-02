@@ -9,14 +9,13 @@
       "request": "attach",
       "name": "Attach",
       "port": 9229,
-      "cwd": "${workspaceFolder}/server.js"
+      "cwd": "${workspaceFolder}/app.js"
     },
-
     {
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}/server.js"
+      "program": "${workspaceFolder}/app.js"
     }
   ]
 }

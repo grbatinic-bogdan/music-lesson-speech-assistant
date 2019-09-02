@@ -49,21 +49,21 @@ function startDialogFlow() {
   let queryParams;
 
   eventEmitter.on(HAS_TEXT_EVENT, text => {
-    console.log(`sending text to dialogflow: ${text}`);
     dfClient
       .getDialogFlowResponse(text, queryParams)
-      .then(dialogFlowResponse => {
-        if (dialogFlowResponse.intent) {
+      .then(queryResult => {
+        /*
+        if (
+          dialogFlowResponse.intent &&
+          dialogFlowResponse.intent.displayName
+        ) {
           queryParams = {
             contexts: dialogFlowResponse.outputContexts
           };
         }
+        */
 
-        eventEmitter.emit(
-          DIALOGFLOW_DATA_EVENT,
-          text,
-          dialogFlowResponse.fulfillmentText
-        );
+        eventEmitter.emit(DIALOGFLOW_DATA_EVENT, queryResult);
       })
       .catch(error => {
         console.log(`Could not get response from DF, ${error}`);
